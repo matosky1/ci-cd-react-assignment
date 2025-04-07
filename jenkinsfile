@@ -1,0 +1,72 @@
+// pipeline {
+//   agent any
+
+//   environment {
+//     NETLIFY_AUTH_TOKEN = credentials('netlify-token') // from Jenkins credentials
+//     NETLIFY_SITE_ID = 'your-netlify-site-id'
+//   }
+
+//   stages {
+//     stage('Build') {
+//       steps {
+//         sh 'npm install'
+//       }
+//     }
+
+//     stage('Test') {
+//       steps {
+//         sh 'npm test -- --watchAll=false'
+//       }
+//     }
+
+//     stage('Deploy') {
+//       steps {
+//         sh 'npm install -g netlify-cli'
+//         sh 'netlify deploy --prod --dir=build --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID'
+//       }
+//     }
+//   }
+// }
+
+
+pipeline (
+    
+
+    stages {
+        stage('Build') {
+            agent{
+                docker{
+                    image 'node:22.14.0-alpine'
+                    reuseNode true
+                }
+
+            }
+            steps {
+                sh '''
+                   ls -la
+                   node --version
+                   npm --version
+                   npm install
+                   npm run build
+                   ls - la
+                   '''
+            }
+            
+        }
+        stage('Test') {
+            agent{
+                docker{
+                    image 'node:22.14.0-alpine'
+                    reuseNode true
+                }
+            }
+            steps{
+                sh '''
+                test -f build/index.html
+                npm test
+                '''
+            }
+        }
+
+    }
+)
