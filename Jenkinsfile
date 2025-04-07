@@ -1,13 +1,8 @@
 pipeline {
     agent {
         docker {
-            image 'node:22.1.0-alpine' // Docker image with Node + npm
+            image 'node:22.1.0-alpine' 
         }
-    }
-
-    environment {
-        NETLIFY_AUTH_TOKEN = credentials('netlify-token')
-        NETLIFY_SITE_ID = 'your-netlify-site-id'
     }
 
     stages {
@@ -31,15 +26,19 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
-            steps {
-                sh '''
-                    echo "Installing Netlify CLI..."
-                    npm install -g netlify-cli
-                    echo "Deploying to Netlify..."
-                    netlify deploy --prod --dir=build --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID
-                '''
-            }
-        }
+        // stage('Deploy') {
+        //     environment {
+        //         NETLIFY_AUTH_TOKEN = credentials('netlify-token')
+        //         NETLIFY_SITE_ID = 'your-netlify-site-id'
+        //     }
+        //     steps {
+        //         sh '''
+        //             echo "Installing Netlify CLI..."
+        //             npm install -g netlify-cli
+        //             echo "Deploying to Netlify..."
+        //             netlify deploy --prod --dir=build --auth=$NETLIFY_AUTH_TOKEN --site=$NETLIFY_SITE_ID
+        //         '''
+        //     }
+        // }
     }
 }
