@@ -1,5 +1,14 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:22.1.0-alpine' // Docker image with Node + npm
+        }
+    }
+
+    environment {
+        NETLIFY_AUTH_TOKEN = credentials('netlify-token')
+        NETLIFY_SITE_ID = 'your-netlify-site-id'
+    }
 
     stages {
         stage('Build') {
@@ -14,16 +23,9 @@ pipeline {
         }
 
         stage('Test') {
-            agent {
-                docker {
-                    image 'node:22.14.0-alpine'
-                    reuseNode true
-                }
-            }
             steps {
                 sh '''
                     echo "Running tests..."
-                    npm install
                     npm test -- --watchAll=false
                 '''
             }
